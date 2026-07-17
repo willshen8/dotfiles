@@ -7,8 +7,9 @@ Personal macOS configuration files — shell, window management, and CLI tooling
 | File | What it configures |
 | --- | --- |
 | `.aerospace.toml` | [AeroSpace](https://github.com/nikitabobko/AeroSpace) — tiling window manager for macOS |
+| `.claude/statusline-command.sh` | [Claude Code](https://claude.com/claude-code) custom status line — model, context usage, cost, and a daily per-model token bar |
 
-_More configs (shell, Claude Code) will be added over time._
+_More configs (shell, etc.) will be added over time._
 
 ## Install
 
@@ -33,6 +34,34 @@ Reload the config from within AeroSpace with `alt-shift-;` then `esc`, or restar
 
 > [!note]
 > If you already have a `~/.aerospace.toml`, back it up first: `mv ~/.aerospace.toml ~/.aerospace.toml.bak`
+
+### Claude Code status line
+
+A custom [status line](https://docs.claude.com/en/docs/claude-code/statusline) for the Claude Code CLI. It renders:
+
+- Active model and output style
+- A context-window usage bar (`ctx:[███░░░░░░░] 30%`) with token count
+- Current session cost
+- A `today:` bar showing the day's token usage split by model (cyan = Opus, green = Sonnet, yellow = Haiku), plus total tokens and cost
+
+```bash
+# Symlink the script into place
+ln -sf ~/dotfiles/.claude/statusline-command.sh ~/.claude/statusline-command.sh
+chmod +x ~/.claude/statusline-command.sh
+```
+
+Then point Claude Code at it by adding this to `~/.claude/settings.json`:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "~/.claude/statusline-command.sh"
+  }
+}
+```
+
+Requires `jq` and `bc` (`brew install jq`; `bc` ships with macOS). Daily usage is tracked in `~/.claude/daily-usage/` (gitignored).
 
 ## Notes
 
