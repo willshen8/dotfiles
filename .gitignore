@@ -1,0 +1,34 @@
+# macOS
+.DS_Store
+
+# Secrets — never commit
+.zshrc
+*.local
+*.credentials*
+.credentials.json
+.netrc
+.npmrc
+.env
+.env.*
+
+# Claude Code runtime / sensitive
+.claude/settings.json
+.claude/settings.local.json
+.claude/daily-usage/
+.claude/sessions/
+.claude/session-env/
+.claude/history.jsonl
+.claude/projects/
+.claude/agent-memory/
+.claude/cache/
+.claude/*-cache*
+.claude/backups/
+.claude/file-history/
+.claude/shell-snapshots/
+.claude/debug/
+.claude/state/
+.claude/tasks/
+
+# Shell history / saved variants
+.zsh_history
+.zprofile.pysave
