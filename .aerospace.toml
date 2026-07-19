@@ -13,7 +13,7 @@ after-startup-command = [
 
 
 # Start AeroSpace at login
-start-at-login = false
+start-at-login = true
 
 # Normalizations. See: https://nikitabobko.github.io/AeroSpace/guide#normalization
 enable-normalization-flatten-containers = true
@@ -224,15 +224,30 @@ on-mode-changed = []
     alt-shift-k = ['join-with up', 'mode main']
     alt-shift-l = ['join-with right', 'mode main']
 
-# Pin Slack to workspace S. Slack (Electron) spawns phantom windows that
-# steal focus and make 'move-node-to-workspace' appear to do nothing, so
-# auto-assign it on detection instead of moving it manually.
+# Workspace 1: Ghostty (left) and Chrome (right), tiled side by side.
+# Tiling order follows launch order, so launch Ghostty before Chrome to keep
+# Ghostty on the left; otherwise swap them with alt-shift-left / alt-shift-right.
 # See: https://nikitabobko.github.io/AeroSpace/guide#on-window-detected-callback
 [[on-window-detected]]
-    if.app-id = 'com.tinyspeck.slackmacgap'
-    run = 'move-node-to-workspace S'
+    if.app-id = 'com.mitchellh.ghostty'
+    run = 'move-node-to-workspace 1'
 
-# Pin Spotify to workspace F, sharing with Firefox (each takes half the screen).
+[[on-window-detected]]
+    if.app-id = 'com.google.Chrome'
+    run = 'move-node-to-workspace 1'
+
+# Pin Slack to workspace S in floating mode. Slack (Electron) spawns phantom
+# windows that steal focus and make 'move-node-to-workspace' appear to do
+# nothing, so auto-assign it on detection instead of moving it manually.
+[[on-window-detected]]
+    if.app-id = 'com.tinyspeck.slackmacgap'
+    run = ['move-node-to-workspace S', 'layout floating']
+
+# Workspace F: Firefox and Spotify, sharing the screen (each takes half).
+[[on-window-detected]]
+    if.app-id = 'org.mozilla.firefox'
+    run = 'move-node-to-workspace F'
+
 [[on-window-detected]]
     if.app-id = 'com.spotify.client'
     run = 'move-node-to-workspace F'
