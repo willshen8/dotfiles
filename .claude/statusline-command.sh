@@ -21,15 +21,15 @@ session_id=$(echo "$input" | jq -r '.session_id')
 model_id=$(echo "$input" | jq -r '.model.id')
 
 # Cost calculation function (per million tokens)
-# Sonnet 4.5: $3.00 input, $15.00 output
-# Opus 4.6: $15.00 input, $75.00 output
-# Haiku: $0.25 input, $1.25 output
+# Sonnet: $3.00 input, $15.00 output
+# Opus: $5.00 input, $25.00 output
+# Haiku: $1.00 input, $5.00 output
 get_costs_for_model() {
     local mid="$1"
     if [[ "$mid" == *"opus"* ]]; then
-        echo "15.00 75.00"
+        echo "5.00 25.00"
     elif [[ "$mid" == *"haiku"* ]]; then
-        echo "0.25 1.25"
+        echo "1.00 5.00"
     else
         # Default to Sonnet pricing
         echo "3.00 15.00"
