@@ -8,7 +8,14 @@ config-version = 2
 # You can use it to add commands that run after AeroSpace startup.
 # Available commands : https://nikitabobko.github.io/AeroSpace/commands
 after-startup-command = [
-  'exec-and-forget borders active_color=0xffff0000 inactive_color=0xff494d64 width=10.0'
+  'exec-and-forget borders active_color=0xfffdb927 inactive_color=0xff494d64 width=12.0',
+  # Launch the apps for workspace 1 (Ghostty left, Chrome right) and
+  # workspace 2 (VSCode left, Spotify right) in a fixed order at startup.
+  # AeroSpace tiles new windows in creation order, so opening them in this
+  # sequence (with short delays) makes the left/right layout deterministic
+  # on every restart. Actual workspace placement comes from the
+  # on-window-detected rules below.
+  'exec-and-forget zsh -c "open -a Ghostty && sleep 1 && open -b com.google.Chrome && open -b com.microsoft.VSCode && sleep 1 && open -b com.spotify.client"'
 ]
 
 
@@ -113,7 +120,8 @@ on-mode-changed = []
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#layout
     alt-slash = 'layout tiles horizontal vertical'
-    alt-comma = 'layout accordion horizontal vertical'
+    # alt-comma disabled: always stay in tiles layout, never accordion
+    # alt-comma = 'layout accordion horizontal vertical'
 
     # See: https://nikitabobko.github.io/AeroSpace/commands#focus
     # alt-h = 'focus left'
@@ -224,31 +232,28 @@ on-mode-changed = []
     alt-shift-k = ['join-with up', 'mode main']
     alt-shift-l = ['join-with right', 'mode main']
 
-# Workspace 1: Ghostty (left) and Chrome (right), tiled side by side.
-# Tiling order follows launch order, so launch Ghostty before Chrome to keep
-# Ghostty on the left; otherwise swap them with alt-shift-left / alt-shift-right.
+# Pin Slack to workspace S. Slack (Electron) spawns phantom windows that
+# steal focus and make 'move-node-to-workspace' appear to do nothing, so
+# auto-assign it on detection instead of moving it manually.
 # See: https://nikitabobko.github.io/AeroSpace/guide#on-window-detected-callback
-[[on-window-detected]]
-    if.app-id = 'com.mitchellh.ghostty'
-    run = 'move-node-to-workspace 1'
 
 [[on-window-detected]]
-    if.app-id = 'com.google.Chrome'
-    run = 'move-node-to-workspace 1'
+if.app-id = 'com.google.Chrome'
+run = 'move-node-to-workspace 1'
 
-# Pin Slack to workspace S in floating mode. Slack (Electron) spawns phantom
-# windows that steal focus and make 'move-node-to-workspace' appear to do
-# nothing, so auto-assign it on detection instead of moving it manually.
+[[on-window-detected]]
+if.app-id = 'com.mitchellh.ghostty'
+run = 'move-node-to-workspace 1'
+
 [[on-window-detected]]
     if.app-id = 'com.tinyspeck.slackmacgap'
-    run = ['move-node-to-workspace S', 'layout floating']
+    run = 'move-node-to-workspace S'
 
-# Workspace F: Firefox and Spotify, sharing the screen (each takes half).
+# Pin VSCode and Spotify to workspace 2.
 [[on-window-detected]]
-    if.app-id = 'org.mozilla.firefox'
-    run = 'move-node-to-workspace F'
+    if.app-id = 'com.microsoft.VSCode'
+    run = 'move-node-to-workspace 2'
 
 [[on-window-detected]]
     if.app-id = 'com.spotify.client'
-    run = 'move-node-to-workspace F'
-
+    run = 'move-node-to-workspace 2'
